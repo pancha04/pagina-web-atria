@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <link rel="stylesheet" href="styles.css">
+    <title>Finalizar compra</title>
+</head>
+<body>
+    <div  class="checkout">
+        <button class="button-back" id="button-back-checkout">vovler</button>
+        <div class="checkout-logo">
+            <img src="imagenes/logo-atria.jpg" alt="">
+        </div>
+        <h2>Finalizar compra</h2>
+        <div class="checkout-container">
+            <div class="checkout-item email">
+                <label for="email">Correo electrónico</label>
+                <input id="email" type="email" required>
+            </div>
+            <div class="checkout-item entrega">
+                <label for="entrega">Medio de entrega</label>
+                <select name="" id="entrega">
+                    <option value="correo">Correo Argentino</option>
+                    <option value="retiro">Retiro en ballester</option>
+                </select>
+            </div>
+            <div class="checkout-item direccion" id="direccionSection">
+                <label for="codigoPostal">Calcular Envio</label>
+                <input type="text" id="codigoPostal" placeholder="Código Postal" required />
+                <span>Este precio sera estimativo ya que la entrega se arregla por whatsapp luego de la compra</span>
+                <p id="costoEnvio" class="costoEnvio"></p>
+            </div>
+
+            <div class="checkout-item metodo-pago">
+                <label for="metodoPago">Método de pago</label>
+                <select id="metodoPago">
+                    <option value="efectivo">Efectivo</option>
+                    <option value="mercado pago">Mercado pago</option>
+                </select>
+            </div>
+        </div>
+        <button class="finalizar-compra" id="confirmarCompra" data-whatsapp="5491125178958">Finalizar compra</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <script src="checkout.js"></script>
+</body>
+</html>
