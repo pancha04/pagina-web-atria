@@ -96,7 +96,7 @@ header{
   font-size: 25px;
   color: var(--color--300);
   width: auto;
-  margin: 1;
+  margin: 0;
 }
 .side-menu {
   display: flex;
