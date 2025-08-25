@@ -26,6 +26,20 @@ async function cotizarEnvioRapidAPI(destinoCP,provinciaDestino) {
         return { sucursal: null, domicilio: null };
     }
 }
+async function pagarConMP(carrito, numOrden) {
+    const resp = await fetch("http://localhost:3000/crear-preferencia", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ carrito, numOrden })
+    });
+    const data = await resp.json();
+    if (resp.ok && data.init_point) {
+    window.location.href = data.init_point; // redirige al Checkout de MP
+    } else {
+    alert("No se pudo iniciar el pago");
+    console.error("crear-preferencia error:", data);
+    }
+}
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -84,29 +98,23 @@ confirmarBtn.addEventListener("click", async () => {
     const metodoPago = metodoPagoInput.value;
     const entrega = entregaSelect.value;
     const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-    const numOrden=getRandomInt();
+    const numOrden = getRandomInt();
 
     if (!email || !carrito.length) {
-        alert("Por favor completá todos los campos y agregá productos al carrito.");
-        return;
+    alert("Por favor completá todos los campos y agregá productos al carrito.");
+    return;
     }
+
     try {
-    const res = await fetch("http://localhost:3000/crear-preferencia", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ carrito }) 
-    });
-
-    const data = await res.json();
-
-    if (res.ok && data.init_point) {
-        window.location.href = data.init_point;
-    } else {
-        alert("Error al generar el link de pago.");
-    }
+    confirmarBtn.disabled = true;
+    confirmarBtn.textContent = "Redirigiendo a pago...";
+    await pagarConMP(carrito, numOrden);
     } catch (err) {
     console.error("Error al crear preferencia:", err);
     alert("No se pudo conectar con el servidor.");
+    } finally {
+    confirmarBtn.disabled = false;
+    confirmarBtn.textContent = "Confirmar compra";
     }
 });
 });

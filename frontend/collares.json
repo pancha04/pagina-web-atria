@@ -3,14 +3,14 @@
     {
       "id": 1,
       "name": "Collar cristal",
-      "image": "imagenes/pulseras-cristales.jpg",
+      "image": "imagenes/collares.jpg",
       "image2": "imagenes/pulseras-cristales.jpg",
       "price": 10000
     },
     {
       "id": 2,
       "name": "Collar Rojo",
-      "image": "imagenes/pulsera-multicolor.jpg",
+      "image": "imagenes/collares.jpg",
       "image2": "imagenes/pulseras-cristales.jpg",
       "price": 6000
     },
@@ -24,7 +24,7 @@
     {
       "id": 4,
       "name": "Collar Rojo",
-      "image": "imagenes/pulsera-multicolor.jpg",
+      "image": "imagenes/collares.jpg",
       "image2": "imagenes/pulseras-cristales.jpg",
       "price": 8000
     },
