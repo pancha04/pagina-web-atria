@@ -1,4 +1,4 @@
-// ====== imports & setup ======
+
 const express = require("express");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
@@ -10,7 +10,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ====== utils ======
+app.use((req, _res, next) => {
+  console.log(`[REQ] ${req.method} ${req.url}`);
+  next();
+});
 const formatARS = n =>
   new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS" }).format(n);
 
@@ -19,16 +22,15 @@ function buildWhatsAppLink(phone, text) {
   return `${base}?text=${encodeURIComponent(text)}`;
 }
 
-// ====== mailer ======
+
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
 });
 
-// ====== MP SDK ======
+
 const mp = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
 
-// ====== ENDPOINT: crear preferencia ======
 app.post("/crear-preferencia", async (req, res) => {
   try {
     const { carrito, numOrden } = req.body;
@@ -52,15 +54,12 @@ app.post("/crear-preferencia", async (req, res) => {
         pending: `${process.env.PUBLIC_URL}/pending`
       },
       auto_return: "approved",
-      // 🔔 importantísimo: tu webhook (debe ser público)
       notification_url: `${process.env.PUBLIC_URL}/webhook`,
-      // datos extra opcionales
       metadata: { numOrden }
     };
 
     const response = await preference.create({ body });
 
-    // Devolvés el init_point para redirigir desde el frontend
     return res.json({
       id: response.id,
       init_point: response.init_point
@@ -71,60 +70,115 @@ app.post("/crear-preferencia", async (req, res) => {
   }
 });
 
-// ====== ENDPOINT: webhook (notificaciones de pago) ======
-// Mercado Pago envía POST con querys como ?type=payment&data.id=123
 app.post("/webhook", async (req, res) => {
   try {
-    // Aceptar rápido para evitar reintentos excesivos
     res.sendStatus(200);
 
     const type = req.query.type || req.body?.type;
     const paymentId = req.query["data.id"] || req.body?.data?.id;
+    if (type !== "payment" || !paymentId) return;
 
-    if (type !== "payment" || !paymentId) {
-      return;
+    const payment = await new Payment(mp).get({ id: String(paymentId) });
+
+    if (payment.status === "approved") {
+      const email = payment.payer?.email || process.env.DESTINO;
+      const numOrden = payment.metadata?.numOrden;
+
+      // armá tu HTML como quieras
+      const html = `
+        <h2>Pago aprobado</h2>
+        ${numOrden ? `<p><strong>N° de orden:</strong> ${numOrden}</p>` : ""}
+        <p><strong>Total:</strong> ${formatARS(payment.transaction_amount)}</p>
+        <p><strong>Email comprador:</strong> ${email}</p>
+      `;
+
+      await transporter.sendMail({
+        from: `"Tienda" <${process.env.EMAIL_USER}>`,
+        to: [process.env.DESTINO, email],
+        subject: `Pago aprobado ${numOrden ? `#${numOrden}` : ""}`,
+        html
+      });
+
+      console.log("📧 Mail de pago aprobado enviado");
     }
-
-    // Consultar el pago
-    const payment = await new Payment(mp).get({ id: paymentId.toString() });
-
-    // Estados posibles: approved, pending, rejected, in_process, etc.
-    const status = payment.status; // "approved", "rejected", "pending", ...
-    const orderTotal = payment.transaction_amount;
-    const payerEmail = payment.payer?.email;
-    const preferenceId = payment.additional_info?.items?.[0]?.id || payment.preference_id;
-    const externalMetadata = payment.metadata; // { numOrden: ... } si lo mandaste
-
-    console.log("💳 Webhook pago:", {
-      paymentId,
-      status,
-      orderTotal,
-      payerEmail,
-      preferenceId,
-      externalMetadata
-    });
-
-    // TODO: acá actualizá tu orden en DB: set estado según "status"
-    // if (status === "approved") { /* marcar pagado, descontar stock, etc. */ }
-
-    // (Opcional) enviar mail de confirmación
-    // await transporter.sendMail({ ... });
-
   } catch (err) {
     console.error("Error en webhook:", err?.message || err);
   }
 });
 
-// ====== ENDPOINT: redirecciones (opcional) ======
-app.get("/success", (req, res) => {
-  // MP agrega querys: payment_id, status, merchant_order_id, preference_id, collection_id, etc.
-  const { payment_id, status, preference_id } = req.query;
-  return res.send(
-    ` <h1>¡Pago recibido!</h1>
-      <p>Estado: ${status}</p>
-      <p>Payment ID: ${payment_id}</p>
-      <p>Preference ID: ${preference_id}</p>`
-  );
+app.get("/success", async (req, res) => {
+  try {
+    // MP suele mandar payment_id o collection_id según el flujo
+    const paymentId = req.query.payment_id || req.query.collection_id;
+
+    // Armamos un texto para WhatsApp con algunos datos útiles
+    let waText = "¡Hola! Ya realicé el pago y quiero coordinar mi pedido 🙌";
+    if (paymentId) waText += `\nPago MP: ${paymentId}`;
+
+    // Si querés más info real (importe, email, etc.), consultamos el pago:
+    try {
+      if (paymentId) {
+        const p = await new Payment(mp).get({ id: String(paymentId) });
+        const total = p?.transaction_amount;
+        const email = p?.payer?.email;
+        const numOrden = p?.metadata?.numOrden;
+        waText += numOrden ? `\nN° de orden: ${numOrden}` : "";
+        waText += total ? `\nTotal: $${total}` : "";
+        waText += email ? `\nEmail: ${email}` : "";
+      }
+    } catch (e) {
+      // si falla la consulta no rompemos la redirección
+      console.error("No se pudo consultar el pago en /success:", e?.message || e);
+    }
+
+    const phone = process.env.WHATSAPP_PHONE; // ej: 54911XXXXXXXX
+    if (!phone) {
+      return res.status(500).send("<h1>Falta configurar WHATSAPP_PHONE en el servidor</h1>");
+    }
+
+    // Link universal de WhatsApp
+    const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(waText)}`;
+
+    // Página intermedia: avisa y redirige en N segundos
+    const segundos = 3; // cambialo si querés más/menos tiempo
+
+    return res.send(`
+      <!doctype html>
+      <html lang="es">
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Pago aprobado</title>
+        <meta http-equiv="refresh" content="${segundos};url=${waLink}">
+        <style>
+          body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
+                 display: grid; place-items: center; min-height: 100dvh; background:#fafafa; margin:0; }
+          .card { background:#fff; padding:24px; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,.08); max-width:520px; }
+          h1 { margin:0 0 8px; font-size:26px; }
+          p { margin:8px 0; line-height:1.5; color:#333; }
+          .btn { display:inline-block; margin-top:16px; padding:12px 16px; border-radius:10px; 
+                 text-decoration:none; background:#25D366; color:white; font-weight:600; }
+          .muted { color:#666; font-size:14px; }
+        </style>
+      </head>
+      <body>
+        <main class="card">
+          <h1>✅ Pago aprobado</h1>
+          <p>Te vamos a dirigir al <strong>WhatsApp de la marca</strong> para coordinar tu entrega.</p>
+          <p class="muted">Si no te redirige automáticamente en ${segundos} segundos, hacé clic en el botón:</p>
+          <a class="btn" href="${waLink}">Ir ahora a WhatsApp</a>
+        </main>
+        <script>
+          // Fallback JS por si el meta refresh es bloqueado
+          setTimeout(function(){ window.location.replace(${JSON.stringify(waLink)}); }, ${segundos * 1000});
+        </script>
+      </body>
+      </html>
+    `);
+  } catch (e) {
+    console.error("Error en /success:", e?.message || e);
+    return res.status(500).send("<h1>Ocurrió un problema al procesar la redirección</h1>");
+  }
 });
 
 app.get("/failure", (req, res) => {
@@ -187,7 +241,7 @@ app.post("/comprar", async (req, res) => {
 
     const mailOptions = {
       from: `"Tienda" <${process.env.EMAIL_USER}>`,
-      to: [process.env.DESTINO, email],
+      to: email,
       subject: `Confirmación de compra ${numOrden ? `#${numOrden}` : ""}`,
       html: `
         <h2>Gracias por tu compra</h2>
@@ -212,4 +266,34 @@ app.post("/comprar", async (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✅ API escuchando en http://localhost:${PORT}`);
+});
+
+app.get("/mp/last", async (req, res) => {
+  try {
+    // Busca los últimos 10 pagos (más recientes primero)
+    const paymentClient = new Payment(mp);
+    const search = await paymentClient.search({
+      qs: {
+        sort: "date_created",
+        criteria: "desc",
+        limit: 10
+      }
+    });
+
+    const items = (search?.results || []).map(r => ({
+      id: r.id,
+      date_created: r.date_created,
+      status: r.status,
+      status_detail: r.status_detail,
+      amount: r.transaction_amount,
+      payer_email: r.payer?.email,
+      description: r.description,
+    }));
+
+    console.log("🔎 MP last payments:", items);
+    return res.send(`<pre>${JSON.stringify(items, null, 2)}</pre>`);
+  } catch (e) {
+    console.error("Error /mp/last:", e?.message || e);
+    return res.status(500).send("No se pudo listar pagos");
+  }
 });

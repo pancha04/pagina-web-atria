@@ -15,7 +15,7 @@ async function enviarMail(cliente, carrito) {
 
     const mailOptions = {
     from: `"Tienda" <${process.env.EMAIL_USER}>`,
-    to: [process.env.DESTINO, cliente.email],
+    to: cliente.email,
     subject: `Nueva compra de ${cliente.nombre}`,
     html: `
         <h3>Detalles del pedido</h3>
