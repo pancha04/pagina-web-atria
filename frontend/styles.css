@@ -299,10 +299,10 @@ header{
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 45px;
+  gap: 40px;
   justify-content: center;
   overflow-x: hidden;
-  margin: 30px 30px;
+  margin: 30px 20px;
 }
 
 .products-carrousel-title{

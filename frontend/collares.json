@@ -2,30 +2,30 @@
   "products": [
     {
       "id": 1,
-      "name": "Collar cristal",
-      "image": "imagenes/collares.jpg",
-      "image2": "imagenes/pulseras-cristales.jpg",
+      "name": "Collar Ojo Turco",
+      "image": "imagenes/collar-ojo-turco-negro.jpg",
+      "image2": "imagenes/collar-ojo-turco-negro.jpg",
       "price": 10000
     },
     {
       "id": 2,
-      "name": "Collar Rojo",
-      "image": "imagenes/collares.jpg",
-      "image2": "imagenes/pulseras-cristales.jpg",
+      "name": "Collar Perlas",
+      "image": "imagenes/collar-perlas.jpg",
+      "image2": "imagenes/collar-perlas.jpg",
       "price": 6000
     },
     {
       "id": 3,
       "name": "Collar Rojo",
       "image": "imagenes/collares.jpg",
-      "image2": "imagenes/pulseras-cristales.jpg",
+      "image2": "imagenes/collares.jpg",
       "price": 6000
     },
     {
       "id": 4,
       "name": "Collar Rojo",
-      "image": "imagenes/collares.jpg",
-      "image2": "imagenes/pulseras-cristales.jpg",
+      "image": "imagenes/collar-perlas-blanco.jpg",
+      "image2": "imagenes/collar-perlas-blanco.jpg",
       "price": 8000
     },
     {
