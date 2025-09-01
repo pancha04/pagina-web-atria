@@ -1,15 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Dancing+Script:wght@400..700&family=Julius+Sans+One&family=Satisfy&display=swap');
 main {
   overflow-x: hidden;
-  
 }
 :root{
     --color--000: #fff;
     --color--100:#f7f0e9;
     --color--200:#e3cbc3;
     --color--300:#80655c;
-
-
+}
+html{
+    scroll-behavior: smooth;
 }
 body {
   margin: 0;
@@ -123,7 +123,7 @@ header{
   display: flex;
   flex-direction: row;
 }
-.pulseras, .collares{
+.pulseras, .collares, .capsulas{
   display: flex;
   position: fixed;
   left: -100%;
@@ -135,15 +135,15 @@ header{
   justify-content: start;
   background-color: white;
 }
-.pulseras.open, .collares.open{
+.pulseras.open, .collares.open, .capsulas.open{
   left: 0;
   top: 0;
 }
 
-.pulseras.open ul, .collares.open ul{
+.pulseras.open ul, .collares.open ul, .capsulas.open ul{
   padding: 0;
 }
-.pulseras.open ul li , .collares.open ul li{
+.pulseras.open ul li , .collares.open ul li, .capsulas.open ul li{
   display: flex;
   flex-direction: row;
 }
@@ -152,8 +152,14 @@ header{
   background-color: transparent;
   border: none;
   font-size: 20px;
+  color: var(--color--300);
 }
-.menu-collares, .menu-pulseras{
+.sidebar-button-down{
+  display: none;
+}
+.menu-collares, .menu-pulseras, .menu-capsulas{
+  display: flex;
+  flex-direction: row;
   align-items: center;
 }
 
@@ -197,17 +203,17 @@ header{
   flex-direction: column;
   width: 100%;
 }
-.hero__content-img{
+.hero__content-img, .baner-info{
   position: relative;
   width: 100%;
   max-height: 1000px;
   overflow: hidden;
 }
 
-.hero__content-img img{
+.hero__content-img img, .baner-info img{
   display: block;
   width: 100%;
-  min-height: 300px;
+  min-height: 250px;
   object-position: center;
   object-fit: cover;
 }
@@ -216,7 +222,6 @@ header{
   position: relative;
   width: 100%;
   max-width: 100%;
-  max-height: 600px;
   background-color: #00000079;
   overflow: hidden;
 }
@@ -226,6 +231,7 @@ header{
   height: 100%;
   object-position: center;
   object-fit: cover;
+  height: 400px;
 
 }
 .hero__content-img .collares-section, .pulseras-section::after{
@@ -652,6 +658,34 @@ header{
   font-size: 20px;
   padding: 10px;
 }
+.secciones-destacadas__container{
+  height: 200px;
+  width: 100%;
+  background-color: var(--color--100);
+  display: flex;
+  flex-direction: row;
+}
+.secciones-destacadas{
+  width: 100%;
+  gap: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  padding: 20px;
+}
+.secciones-destacadas__item{
+  border: #80655c;
+  border-radius: 5px;
+  background-color: var(--color--200);
+  display: flex;
+  align-items: center;
+  height: 30px;
+}
+.secciones-destacadas__item a{
+  padding: 0 10px;
+  text-decoration: none;
+  color: var(--color--300);
+}
 @media screen and (min-width: 550px) {
   .carousel-track img {
     height: 750px;
@@ -661,6 +695,58 @@ header{
   }
 }
 @media screen and (min-width: 768px) {
+  .collares-section img, .pulseras-section img{
+    height: 550px;
+  }
+    .side-menu{
+    left: 0;
+    display: flex;
+    flex-direction: row;
+    height: 50px;
+    width: 100%;
+    position: static;
+    z-index: 100;
+  }
+  .pulseras, .collares, .capsulas {
+    display: none;             
+    left: 0;
+    top: 100%;              
+    height: auto;           
+    width:100%;           
+    background: #fff;
+    box-shadow: 0 6px 20px rgba(0,0,0,.12);
+    padding: .5rem 0;
+    z-index: 1000;
+  }
+  .pulseras.open, .collares.open, .capsulas.open {
+    display: flex;
+    flex-direction: column;
+  }
+  .side-menu ul{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin: 0 30px;
+    text-decoration: none;
+    justify-content: space-between;
+  }
+  .side-menu ul li{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  .header__nav-menu{
+    display: none;
+  }
+  .sidebar-button-soon{
+    display: none;
+  }
+  .sidebar-button-down{
+    display: flex;
+    border: none;
+    background-color: transparent;
+    color: var(--color--300);
+  }
   .product__container-grid{
     margin: 40px 200px;
   }
