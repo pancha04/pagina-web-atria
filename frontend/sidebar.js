@@ -12,8 +12,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
         const pulseras=document.getElementById("pulseras")
         const menuCollares=document.getElementById("menu-collares")
         const collares=document.getElementById("collares")
-        const menuCapsulas=document.getElementById("menu-capsulas")
-        const capsulas=document.getElementById("capsulas")
+
 
         if (toggle && menu && overlay) {
             console.log('✅ Elementos encontrados')
@@ -21,9 +20,6 @@ document.addEventListener("DOMContentLoaded", ()=>{
             toggle.addEventListener('click', () => {
                 menu.classList.toggle('open')
                 overlay.classList.toggle('show')
-            })
-            menuCapsulas.addEventListener("click", ()=>{
-                capsulas.classList.toggle("open")
             })
             menuPulseras.addEventListener('click', () => {
                 pulseras.classList.toggle('open')
