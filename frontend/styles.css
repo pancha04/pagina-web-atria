@@ -238,6 +238,7 @@ header{
   display: block;
   width: 100%;
   min-height: 250px;
+  height: 250px;
   object-position: center;
   object-fit: cover;
 }
@@ -703,7 +704,7 @@ header{
   flex-wrap: wrap;
   flex-direction: row;
   justify-content: center;
-  padding: 10px 30px;
+  padding:0 30px;
 }
 .secciones-destacadas__item{
   border: #80655c;
@@ -802,7 +803,7 @@ header{
 }
 
 .hero__content-img{
-    width: 300px;       
+  width: 300px;       
   height: 300px;
   overflow: hidden;
   border-radius: 50%; 
