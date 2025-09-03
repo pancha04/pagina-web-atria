@@ -108,6 +108,7 @@ app.post("/webhook", async (req, res) => {
 
 app.get("/success", async (req, res) => {
   try {
+    
     // MP suele mandar payment_id o collection_id según el flujo
     const paymentId = req.query.payment_id || req.query.collection_id;
 
@@ -170,6 +171,7 @@ app.get("/success", async (req, res) => {
         </main>
         <script>
           // Fallback JS por si el meta refresh es bloqueado
+          try { localStorage.removeItem('carrito'); } catch (e) {}
           setTimeout(function(){ window.location.replace(${JSON.stringify(waLink)}); }, ${segundos * 1000});
         </script>
       </body>
