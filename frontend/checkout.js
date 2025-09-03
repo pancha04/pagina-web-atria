@@ -123,7 +123,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (metodoPago === "efectivo") {
         if (dataCompra.waLink) {
+          localStorage.removeItem('carrito');
           window.location.href = dataCompra.waLink;
+
         } else {
           alert("Pedido registrado. Te contactamos para coordinar el pago en efectivo.");
         }
