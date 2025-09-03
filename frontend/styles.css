@@ -223,21 +223,22 @@ header{
   padding: 1rem;
 }
 
-.hero__content{
+.hero__content, .hero-section{
   display: flex;
   flex-direction: column;
   width: 100%;
   justify-content: center;
   align-items: center;
 }
-.hero__content-img, .baner-info{
+.hero__content-img, .hero-section-img{
   position: relative;
   width: 100%;
   max-height: 1000px;
   overflow: hidden;
 }
 
-.hero__content-img img, .baner-info img{
+
+.hero__content-img img, .hero-section img{
   display: block;
   width: 100%;
   min-height: 250px;
@@ -246,21 +247,20 @@ header{
   object-fit: cover;
 }
 
-.collares-section ,.pulseras-section{
+.hero-section-img{
   position: relative;
   width: 100%;
   max-width: 100%;
   background-color: #00000079;
   overflow: hidden;
 }
-.collares-section img, .pulseras-section img{
+.hero-section-img img{
   display: block;
   width: 100%;
   height: 100%;
   object-position: center;
   object-fit: cover;
   height: 400px;
-
 }
 .hero__content-img .collares-section, .pulseras-section::after{
   content: "";
@@ -272,7 +272,7 @@ header{
   background: rgba(0, 0, 0, 0.507); 
 }
 
-.hero__content-img p {
+.hero-section-img p {
   position: absolute;
   color: white;
   font-family: 'Julius Sans One', sans-serif;
@@ -287,14 +287,14 @@ header{
 }
 
 
-.hero__content-text{
+.hero-section-text{
   text-align: center;
   display: flex;
   padding: 7px 0;
   justify-content: center;
 }
 
-.hero__content-text h1{
+.hero-section-text h1{
   font-family: 'Julius Sans One', sans-serif;
   color: var(--color--300);
   margin: 0;
@@ -736,13 +736,18 @@ header{
     height: 550px;
   }
   header{
-    box-shadow: 0 0px 0px transparent;
+    display: none;
   }
   .header__nav-logo{
     display: none;
   }
   .hero__content-text{
     grid-area:texto ;
+    justify-content: center;
+    display: flex;
+  }
+  .header__nav-cart i{
+    font-size: 25px;
   }
   .hero__content{
     grid-area: imagen;
@@ -805,7 +810,6 @@ header{
   .pulseras li, .collares li, .capsulas li {
   display: block;
 }
-
 .hero__content-img{
   width: 300px;       
   height: 300px;
@@ -869,6 +873,21 @@ header{
   .checkout-item{
     width: 400px;
   }
+  .collares-section ,.pulseras-section{
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  background-color: #00000079;
+  overflow: hidden;
+}
+.collares-section img, .pulseras-section img{
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-position: center;
+  object-fit: cover;
+  height: 400px;
+}
 }
 @media screen and (min-width: 950px) {
   .producto-seccion{
