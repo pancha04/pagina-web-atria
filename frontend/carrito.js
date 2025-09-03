@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded",()=>{
     iniciarBtn.addEventListener('click', () => {
         const carrito = JSON.parse(localStorage.getItem('carrito')) || []
         window.location.href = 'checkout.html'
-        renderCarrito()
+        
     })
     renderCarrito();
 })
