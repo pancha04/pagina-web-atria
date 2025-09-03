@@ -101,3 +101,9 @@ document.addEventListener("DOMContentLoaded",()=>{
     })
     renderCarrito();
 })
+window.addEventListener('pageshow', (e) => {
+  if (e.persisted) {
+    // la página vino del cache del navegador
+    renderCarrito();
+  }
+});
