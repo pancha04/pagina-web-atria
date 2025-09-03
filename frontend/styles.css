@@ -686,7 +686,7 @@ header{
   padding: 10px;
 }
 .secciones-destacadas__container{
-  height: 240px;
+  height: 250px;
   width: 100%;
   background-color: var(--color--200);
   display: flex;
