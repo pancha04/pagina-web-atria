@@ -710,6 +710,12 @@ header{
   flex-direction: row;
   justify-content: center;
 }
+.hero__content-text{
+  font-size: 7px;
+}
+.hero__content-text h1{
+  text-align: center;
+}
 .secciones-destacadas__item{
   border: #80655c;
   border-radius: 5px;

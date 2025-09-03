@@ -1,30 +1,25 @@
-// productos.js
 
-// normalizar: si la URL termina con "/" tomarlo como index.html
 const paginaActual = (() => {
   const p = window.location.pathname;
   if (p.endsWith('/') || p === '') return 'index.html';
   const last = p.split('/').pop();
-  // cubrir variantes comunes
   if (!last || last === 'index' || last === 'index.htm') return 'index.html';
   return last;
 })();
 
-// mapeo de página -> json (agrego '' por si acaso)
 const mapeoCategorias = {
   '': 'destacados.json',
   'index.html': 'destacados.json',
   'collares.html': 'collares.json',
-  'pulseras.html': 'pulseras.json'
+  'pulseras.html': 'pulseras.json',
+  'pulserasHiloSimple.html': 'pulserasHiloSimple.json' ,
+  'pulseras-cristal.html': 'pulseras-cristal.json'
 };
 
-// Fallback SIEMPRE, así jamás queda null/undefined
 const jsonArchivo = mapeoCategorias[paginaActual] ?? 'destacados.json';
 
-// si por alguna razón jsonArchivo queda raro, abortar antes de romper
 if (!jsonArchivo || typeof jsonArchivo !== 'string') {
   console.error('jsonArchivo inválido para', { paginaActual, jsonArchivo });
-  // salimos para evitar /null.json
 } else {
   const categoria = jsonArchivo.replace(/\.json$/i, '');
 
@@ -65,7 +60,7 @@ if (!jsonArchivo || typeof jsonArchivo !== 'string') {
       const data = await res.json();
       const productos = data?.products ?? data ?? [];
 
-      // home -> destacados; otras páginas -> listado normal
+
       if (paginaActual === 'index.html') {
         renderizarProductos(productos, 'products-destacados');
       } else {
@@ -75,7 +70,6 @@ if (!jsonArchivo || typeof jsonArchivo !== 'string') {
       console.error('Error cargando productos:', e);
     }
   }
-
   document.addEventListener('DOMContentLoaded', cargar);
 }
 

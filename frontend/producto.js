@@ -1,17 +1,15 @@
-// producto.js
 
 function getParam(name) {
   const usp = new URLSearchParams(window.location.search);
   return usp.get(name);
 }
 
-// 1) resolver categoría de forma robusta: param -> referrer -> fallback
 function getCategorySafe() {
   // desde la URL actual
   const cat = (getParam('cat') || '').toLowerCase();
   if (cat) return cat;
 
-  // intentar extraer de la página de origen (si existe)
+
   try {
     if (document.referrer) {
       const u = new URL(document.referrer);
@@ -20,11 +18,10 @@ function getCategorySafe() {
     }
   } catch (_) {}
 
-  // último recurso: destacados
   return 'destacados';
 }
 
-// 2) mapear categoría -> archivo json
+
 const mapCatToJson = {
   collares: 'collares.json',
   pulseras: 'pulseras.json',
@@ -63,7 +60,7 @@ fetchJsonChecked(url)
       return;
     }
 
-    // filtrar imágenes por si image2 no existe
+ 
     const imagenes = [producto.image, producto.image2].filter(Boolean);
 
     contenedor.innerHTML = `
@@ -93,7 +90,6 @@ fetchJsonChecked(url)
       </div>
     `;
 
-    // carrusel
     let currentIndex = 0;
     const track = document.querySelector('.carousel-track');
     const leftBtn = document.querySelector('.carousel-btn.left');
@@ -112,7 +108,6 @@ fetchJsonChecked(url)
       goTo(currentIndex);
     });
 
-    // carrito
     const btnAgregar = document.querySelector('.btn-agregar');
     btnAgregar?.addEventListener('click', () => {
       const cantidad = parseInt(document.getElementById('cantidad').value, 10) || 1;
@@ -144,11 +139,10 @@ fetchJsonChecked(url)
     if (contenedor) contenedor.textContent = 'Error al cargar el producto.';
   });
 
-// ⚠️ si tenés tarjetas .producto en esta página, asegurate de incluir cat en la navegación
+
 document.querySelectorAll('.producto').forEach(prod => {
   prod.addEventListener('click', () => {
     const id = prod.dataset.id;
-    // incluir SIEMPRE cat
     window.location.href = `producto.html?id=${id}&cat=${category}`;
   });
 });
