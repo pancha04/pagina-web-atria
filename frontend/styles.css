@@ -310,7 +310,7 @@ header{
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 20px;
+
 }
 
 .carrousel{
@@ -686,15 +686,16 @@ header{
   padding: 10px;
 }
 .secciones-destacadas__container{
-  height: 230px;
+  height: 240px;
   width: 100%;
   background-color: var(--color--100);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding:20px 30px;
+  padding:20px 35px;
   box-sizing: border-box;
+  margin-bottom: 10px;
 }
 .secciones-destacadas__container h2{
   font-family: 'Satisfy', cursive;
