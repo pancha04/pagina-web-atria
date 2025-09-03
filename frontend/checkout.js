@@ -26,8 +26,6 @@ async function cotizarEnvioRapidAPI(destinoCP, provinciaDestino) {
     return { sucursal: null, domicilio: null };
   }
 }
-
-// === IR A MP (igual, pero acepta metodoPago por si lo necesitás en el backend) ===
 async function pagarConMP(carrito, numOrden, metodoPago) {
   const resp = await fetch("http://localhost:3000/crear-preferencia", {
     method: "POST",
@@ -93,11 +91,10 @@ document.addEventListener("DOMContentLoaded", () => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  // === RAMIFICACIÓN POR MÉTODO DE PAGO ===
   confirmarBtn.addEventListener("click", async () => {
     const email = emailInput.value.trim();
     const codigoPostal = codigoPostalInput.value.trim();
-    const metodoPago = metodoPagoInput.value; // "mp" | "efectivo"
+    const metodoPago = metodoPagoInput.value; 
     const entrega = entregaSelect.value;
     const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     const numOrden = getRandomInt();
@@ -111,7 +108,6 @@ document.addEventListener("DOMContentLoaded", () => {
       confirmarBtn.disabled = true;
       confirmarBtn.textContent = "Procesando...";
 
-      // 1) Siempre registramos la orden y enviamos mail/WA desde el backend
       const resCompra = await fetch("http://localhost:3000/comprar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -125,17 +121,15 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // 2) Si es EFECTIVO: NO vamos a MP → redirigimos a WhatsApp
       if (metodoPago === "efectivo") {
         if (dataCompra.waLink) {
           window.location.href = dataCompra.waLink;
         } else {
           alert("Pedido registrado. Te contactamos para coordinar el pago en efectivo.");
         }
-        return; // No llamar a MP
+        return; 
       }
 
-      // 3) Si es MP: crear preferencia y redirigir al checkout de Mercado Pago
       await pagarConMP(carrito, numOrden, metodoPago);
 
     } catch (err) {
