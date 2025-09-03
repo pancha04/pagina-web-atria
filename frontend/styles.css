@@ -734,7 +734,7 @@ header{
   text-decoration: none;
   color: var(--color--300);
 }
-.header__nav-menu{
+.header__nav-menu i{
   color: var(--color--300);
 }
 @media screen and (min-width: 550px) {
