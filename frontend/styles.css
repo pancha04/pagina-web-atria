@@ -734,6 +734,9 @@ header{
   text-decoration: none;
   color: var(--color--300);
 }
+.header__nav-menu{
+  color: var(--color--300);
+}
 @media screen and (min-width: 550px) {
   .carousel-track img {
     height: 750px;
